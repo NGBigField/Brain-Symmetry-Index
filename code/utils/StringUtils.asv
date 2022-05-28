@@ -1,0 +1,70 @@
+classdef StringUtils
+
+    methods (Static)
+        %%
+        function label = eeg_placement(label)   
+            % Constants
+            expectedPrefix = "EEG";
+            expectedSuffix = "REF";
+
+            % Functions
+            len = @(s) strlength(s);
+            indicesPrefix = @(s) 1 : min( len(expectedPrefix), len(s) );
+            indicesSuffix = @(s) len()
+            
+            % Derive from imput:
+            prefix = string(label());
+            suffix = string(label(end-1:end));
+            if prefix == expectedPrefix % Remove prefix
+                label = label(4:end);
+            end
+            if suffix == expectedSuffix % Remove suffix
+                label = label(1:end-2);
+            end
+            label = string(label);
+        end
+        %%
+        function in_struct = to_string(in_struct, what)
+            arguments
+                in_struct   (1,1) struct
+                what        (1,1) string {mustBeTextScalar, mustBeMember(what,["everything", "string_types"])} = "everything"
+            end
+            field_names = string(fieldnames(in_struct));
+            for i = 1 : length(field_names)
+                fieldname = field_names(i);
+                switch what 
+                    case "everything"
+                        % pass
+                    case "string_types"
+                        if ~is_string_type(in_struct.(fieldname))
+                            continue
+                        end
+                    otherwise
+                        error("Not a supported argument")
+                end                
+                in_struct.(fieldname) = string(in_struct.(fieldname));
+            end
+        end
+        %%
+        function str = time_str(d)
+            arguments
+                d (1,1) datetime = datetime
+            end
+            chars = char(d);
+            for iC = 1 : length(chars)
+                c = chars(iC);
+                if c == ':'
+                    c = '-';
+                end
+                chars(iC) = c;
+            end
+            str = string(chars);
+        end
+        %%
+    end
+end
+
+%% subs:
+function tf = is_string_type(input)
+    tf = ischar(input) || isstring(input);
+end
