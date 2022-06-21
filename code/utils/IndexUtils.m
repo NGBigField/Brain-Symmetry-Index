@@ -18,6 +18,14 @@ classdef IndexUtils
             end
         end
         %%
+        function index = find_closer(val, ref)
+            arguments
+                val (1,1) {mustBeNumeric}
+                ref (:,1) {mustBeNumeric}
+            end
+            distance = abs(val-ref);
+            [~, index] = min(distance);
+        end
     end
 
 end

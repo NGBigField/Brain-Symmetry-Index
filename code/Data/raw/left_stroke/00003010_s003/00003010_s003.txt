@@ -1,0 +1,13 @@
+CLINICAL HISTORY: This is a 44-year-old woman, possibly left-handed woman, admitted 7/8/06 with diabetes, sepsis, and brief cardiac arrest.  The patient was found to have a left parietal stroke afterwards with subsequent development of hemorrhage into the stroke in the past two days and the development of unilateral focal motor twitching from the right.
+MEDICATIONS: Valproate, Risperdal.
+INTRODUCTION: Digital video EEG is performed at the bedside using standard 10-20 system of electrode placement with one channel of EKG. The patient is described as confused, but the technologist does not observe that she is experiencing the focal motor activity during the EEG.
+DESCRIPTION OF THE RECORD: The background EEG is poorly organized.  There is less in the way of intrahemispheric asymmetry than one might anticipate in this record, and at times there is a 9 Hz posterior dominant rhythm identified.  There is arrhythmic delta activity identified in the left hemisphere, but it is also seen in the right.  There is epileptiform activity seen in the record with an unusual field of spread and involves C3 and O1, but at times demonstrates an electropositivity.   At other times, with the head rocking, there is a beta asymmetry with a bit more fast activity from the left, and there is clear variability in the underlying epileptiform focus in terms of its maximum in the left parietal versus left central region.   The head-rocking artifact persists into what appears to be a drowsy state for this individual.
+HR:  EKG lead N/A.
+IMPRESSION: Bedside portable EEG for this patient is remarkable for:
+A fair amount of muscle and movement artifact, but bilateral background slowing.
+Superimposed sharp waves from the left hemisphere with variable maximum including C3, P3, and O1.
+CLINICAL CORRELATION: In this individual with a hemorrhagic component, additional EEG recording may be helpful to assess the ongoing epileptogenicity of these findings.
+
+
+
+

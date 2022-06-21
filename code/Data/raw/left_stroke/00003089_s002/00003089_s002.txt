@@ -1,0 +1,11 @@
+CLINICAL HISTORY: This is a 51-year-old heart transplant patient admitted for left carotid endarterectomy.
+MEDICATIONS: Prilosec, Metoprolol, Etomidate, Succinylcholine.
+INTRODUCTION: Continuous video EEG is performed in the OR using standard 10-20 system of electrode placement with one channel of EKG. The tracing begins at 7:50 AM, with the patient awake, and continues throughout the procedure.
+DESCRIPTION OF THE RECORD: As the tracing opens, the patient is awake, but there is a great deal of muscle and movement artifact.  There is an 8 to 9 Hz posterior dominant rhythm and an excess amount of theta.  There are problems with a loss of some of the left scalp electrodes during this study.  The left external carotid is clamped at 9:16:18.  No changes are identified.  The internal carotid is clamped at 9:16:53, and the common carotid is clamped at 9:18:04.  With the electrodes that remain, there is no focal slowing identified although, unfortunately, most of the electrodes are lost are on the left.  Patency is confirmed by doppler, and the EEG concludes at 10:36.
+HR:  60 to 70 BPM.
+IMPRESSION/ CLINICAL CORRELATION: EEG monitoring during this carotid endarterectomy was remarkable for:
+No changes with placement of the clamp, however, there were some problems with electrode integrity.
+
+
+
+

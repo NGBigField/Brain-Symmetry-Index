@@ -64,6 +64,9 @@ classdef StringUtils
             str = string(chars);
         end
         %%
+        function obj = static_printer()
+            obj = Classes.StaticPrinter()
+        end
     end
 end
 

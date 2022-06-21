@@ -4,8 +4,8 @@ addpath(genpath(pwd));
 
 %% Constants:
 Constants = struct;
-Constants.epoch_duration = 10.0 ; % [sec]
-Constants.epoch_overlap  =  2.0 ; % [sec]
+Constants.epoch_duration = 50.0 ; % [sec]
+Constants.epoch_overlap  = 10.0 ; % [sec]
 Constants.Condition = Classes.Condition.Normal;
 
 %% laod table
@@ -29,9 +29,18 @@ filename = StringUtils.time_str(Data.date);
 fullpath = folder+fs+filename;
 
 %% Get Data:
-for i = 1 : length(eeg_file_names)
+N = length(eeg_file_names);
+prog_bar = Classes.ProgressBar(N);
+for i = 1 : N
+    prog_bar.step()
+
     eeg_file_name = eeg_file_names(i);      
         
+    isSkip = check_skip(Constants, Table, eeg_file_name);
+    if isSkip
+        continue
+    end
+
     % load file:
     [hdr, record] = edfread(proper_edf_file_name(eeg_file_name));    
     % derive requested data:
@@ -45,6 +54,7 @@ for i = 1 : length(eeg_file_names)
 
     end % for j
 end
+prog_bar.close()
 
 %% Save Data:
 save(fullpath,"Data");
@@ -77,8 +87,7 @@ function [requested_data] = derive_requested_data(Constants, Table, hdr, target_
     end % for i
     requested_data = struct_cell_2_struct_array(requested_data_cell);
 end % func
-
-
+%%
 function [edf_file_name] = proper_edf_file_name(edf_file_name)
     [~,name,ext] = fileparts(edf_file_name);
     if ext == ""
@@ -164,7 +173,7 @@ function [EEGs] = get_data( EEGs, Constants, hdr, record, labels, requested_data
     end % while
     
 end
-
+%%
 function [eeg_signal_left, eeg_signal_right, time] = get_signals( hdr, record, labels, signal_indices, samples_indices)
 
     % Derive inputs;
@@ -205,7 +214,7 @@ function [eeg_signal_left, eeg_signal_right, time] = get_signals( hdr, record, l
     end % for i
 
 end
-
+%%
 function out = load_files(folderName)
     % Constants:    
     s = @(c) string(c);
@@ -230,5 +239,21 @@ function out = load_files(folderName)
         className = className(1);
         out.(className) = text;
     end
+
+end
+%%
+function isSkip = check_skip(Constants, Table, eeg_file_name)
+    if isempty(Constants.Condition)
+        isSkip = false;
+        return
+    end
+    fileRows = Table.file_name == eeg_file_name;
+    conditions = unique(string(Table.condition(fileRows)));
+    if ismember(string(Constants.Condition),conditions)
+        isSkip = false;
+    else
+        isSkip = true;
+    end
+
 
 end

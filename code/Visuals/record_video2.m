@@ -2,6 +2,10 @@
 clearvars('-except','Data');
 close all; clc;
 
+%% Define what to plot:
+requestedData.placements = [];
+requestedData.condition  = [];
+
 %% Prepare:
 figRecorder = Classes.FigureRecorder(); % Prepare Recorder
 % Adjust plot limits:
@@ -10,6 +14,7 @@ Limits.time = Limits.time/2;
 Limits.freq = Limits.freq/4;
 Limits.freq(1) = 0;
 Limits.bsi(1) = 0;
+Limits.bsi(2) = 2;
 
 %% Iterate:
 nData = length(Data.EEGs);
@@ -20,6 +25,13 @@ for i = 1 : nData
     left  = eegData.left;
     right = eegData.right;
     time  = eegData.time;
+
+    %% Filter Data:
+    isSkip = filter_data(eegData, requestedData);
+    if isSkip
+        progBar.step();
+        continue
+    end
 
     %% Figure:
     figH = figure;
@@ -38,7 +50,7 @@ for i = 1 : nData
     pretty_plot(axisH)
     xlabel("time [sec]",FontSize=15, Interpreter="none")
     title("Time Analysis");
-    ylim(timeLimits)
+    ylim(Limits.time)
 
     %% Plot freqs:
     [L, R, f] = Algo.filteredFFTs(left, right);    
@@ -55,15 +67,16 @@ for i = 1 : nData
     xlabel("freq [Hz]", FontSize=15, Interpreter="none")
     ylabel("|fft|"    , FontSize=15, Interpreter="none")
     title("Frequency Analysis");
-    ylim(freqLimits)
+    ylim(Limits.freq)
 
     %% Plot BSI:
     axisH = subplot(1,3,3);
     bsi = Algo.singleBSI(L,R);
     plotH = bar(0, bsi,1, "stacked", "blue");
     xlim([0,1/2]);
-    ylim([-1,1]);
+    ylim(Limits.bsi);
     title("BSI")
+
     %% Adjust sizes:
     subaxes = get_subaxes(figH);    
     widen_axes(subaxes, 1, 1.5);
@@ -74,6 +87,7 @@ for i = 1 : nData
     
     %% Capture video:
     figRecorder.capture(figH);
+
     %% Update graphics:
     close(figH);
     progBar.step()
@@ -176,4 +190,17 @@ function widen_axes(subaxes, ind, factor)
         subaxes(nextInd).Position(1) = subaxes(nextInd).Position(1) + dW;
     end
     
+end
+%%
+function  isSkip = filter_data(eegData, requestedData)
+    arguments
+        eegData (1,1) Classes.EEGData
+        requestedData (1,1) struct
+    end
+    % Derive:
+    pLeft  = eegData.left.placement.name;
+    pRight = eegData.right.placement.name;
+    % Decide:
+    isSkip = false;
+
 end
