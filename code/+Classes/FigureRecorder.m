@@ -5,8 +5,12 @@ classdef FigureRecorder
     
     methods 
         function obj = FigureRecorder()
-            % obj.writer = VideoWriter("tempVideo.avi", "Uncompressed AVI");
-            obj.writer = VideoWriter("tempVideo.avi");
+            % Parse full path:
+            name = "tempVideo.avi";
+            folder = get_desktop_path();
+            fullpath = folder+filesep+name;
+            % Save objects data:            
+            obj.writer = VideoWriter(fullpath);
             obj.writer.FrameRate = 3;
             obj.writer.Quality = 100;
             obj.writer.open();
@@ -18,13 +22,15 @@ classdef FigureRecorder
                 figH (1,1) = gcf
             end
             frame = getframe(figH);
-%             [X, Map] = frame2im(frame);
-            obj.writer.writeVideo(frame)
-            
+            obj.writer.writeVideo(frame)            
         end
         %%
         function [] = finish(obj)
             obj.writer.close()
+        end
+        %%
+        function delete(obj)
+            obj.finish();
         end
 
     end

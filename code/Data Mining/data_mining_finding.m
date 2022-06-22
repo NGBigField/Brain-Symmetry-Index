@@ -16,7 +16,7 @@ plot_eeg(hdr, record, styles_and_colors, ignore_list)
 
 %% Subs:
 function styles_and_colors = unique_styles_and_colors()
-    colors = distinguishable_colors(12);
+    colors = Visuals.distinguishable_colors(12);
     line_styles = {"-"; ":"; "--"}; %#ok<CLARRSTR>
     colors_cell = to_cell(colors,1);
     styles_and_colors = combinations(line_styles, colors_cell);

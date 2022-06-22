@@ -1,5 +1,10 @@
 classdef Sounds
     methods (Static)
+        function finish()
+            Sounds.gong(2, 110, 2)
+            Sounds.gong(2, 220, 3)
+        end
+        %%
         function gong(vol,frq,dur)
             % gong: sounds gong
             % John Gooden (2022). Gong (https://www.mathworks.com/matlabcentral/fileexchange/21231-gong), MATLAB Central File Exchange. Retrieved June 19, 2022.
