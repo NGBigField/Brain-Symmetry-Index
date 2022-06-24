@@ -3,10 +3,10 @@ Sasikanth (2022). Bi dimensional Emperical Mode Decomposition (BEMD)
 (https://www.mathworks.com/matlabcentral/fileexchange/28761-bi-dimensional-emperical-mode-decomposition-bemd), 
 MATLAB Central File Exchange. Retrieved June 19, 2022.
 %}
-function [ imf_matrix, residue_temp ] = bemd( input_image, options )
+function [ imf_tensor, residue ] = bemd( input_image, options )
     arguments
         input_image
-        options.num_components (1,1) uint16 = 4
+        options.num_components (1,1) uint16 = 12
     end
     % BEMD This program calculates the Bidimensional EMD of a 2-d signal using
     % the process of sifting. It is dependent on the function SIFT.
@@ -47,7 +47,7 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
         end
 
         % assign to output:
-        imf_matrix(:,:,k) = imf_temp; %#ok<AGROW>
+        imf_tensor(:,:,k) = imf_temp; %#ok<AGROW>
         h_func = residue_temp;
 
         % Increment step:
@@ -56,6 +56,9 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
 
     % Return prev warning state:
     warning(prevWarnState);
+
+    % Return outputs:
+    residue = residue_temp;
 
 end
 %%
