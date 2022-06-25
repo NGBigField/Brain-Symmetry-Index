@@ -3,14 +3,15 @@ clear all; close all; clc;
 addpath(genpath(pwd))
 
 %% Load:
-file_name = "00000929_s003_t002.edf";
+file_name = "00007004_s006_t000.edf";
 [hdr, record] = edfread(file_name);
-styles_and_colors = unique_styles_and_colors();
 
 %% Signals list to ignore:
-ignore_list = ["32" "31" "30" "29" "28" "27" "26" "25" "24" "23" "22" "21" "20" "PZ" "EKG1"];
+ignore_list = ["32" "31" "30" "29" "28" "27" "26" "25" "24" "23" "22" "21" "20" "PZ" "EKG1" "FZ" "CZ"];
+ignore_list = [ignore_list "SP1" "SP2" "C3P" "C4P" "EMG" "T1" "T2"];
 close all;
-plot_eeg(hdr, record, styles_and_colors, ignore_list)
+% Plot:
+plot_eeg(hdr, record, ignore_list)
 
 %% End 
 
@@ -22,11 +23,22 @@ function styles_and_colors = unique_styles_and_colors()
     styles_and_colors = combinations(line_styles, colors_cell);
 end
 
-function plot_eeg(hdr, record, styles_and_colors, ignore_list)
+function plot_eeg(hdr, record, ignore_list)
+    % Parse basic data:
     num_electrodes = size(record,1);
     labels = strings(1,num_electrodes);
+
+    % Visual aids:
+    styles_and_colors = unique_styles_and_colors();
     figure;
+    progBar = Classes.PrintedProgressBar(num_electrodes, msg="Plotting...");
+    styleIndex = 0;
+
+    % Iterate:
     for i = 1 : num_electrodes
+        
+        progBar.step();
+
         % label:
         label = hdr.label{i};        
         label = StringUtils.eeg_placement(label);
@@ -36,13 +48,14 @@ function plot_eeg(hdr, record, styles_and_colors, ignore_list)
         if ismember(label, ignore_list)
             continue
         end
+        styleIndex = styleIndex + 1;
 
         % Color and style:
         try
-            style = styles_and_colors{i}{1};
-            color = styles_and_colors{i}{2};
+            style = styles_and_colors{styleIndex}{1};
+            color = styles_and_colors{styleIndex}{2};
         catch
-            disp(10);
+            warning("Styles error. Not enough styles?");
         end
 
         % Plot:
@@ -68,7 +81,11 @@ function plot_eeg(hdr, record, styles_and_colors, ignore_list)
         grid on;
         grid minor;
 
+        drawnow();
+
     end
+    % End:
+    progBar.clear();
     legend
     disp(hdr)
     disp("labels:");

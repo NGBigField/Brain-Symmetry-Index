@@ -121,6 +121,14 @@ classdef StringUtils
             str = formatted(num1) + options.separator + formatted(num2);
         end
         %%
+        function strOut = repeat(strIn, numRepeats, options)
+            arguments
+                strIn               (1,1) string
+                numRepeats          (1,1) {mustBeInteger}
+                options.delimeter         {mustBeText} = ""
+            end
+            strOut = strjoin( repmat(strIn, 1, numRepeats), options.delimeter );
+        end
     end
 end
 

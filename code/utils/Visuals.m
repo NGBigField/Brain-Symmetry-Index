@@ -4,7 +4,18 @@ classdef Visuals
     
     methods (Static)
         function colors = distinguishable_colors(n_colors)
-            colors = distinguishable_colors_full(n_colors,bg,func);
+            colors = distinguishable_colors_full(n_colors);
+        end
+        %%
+        function colors = default_colors()
+            colors = colororder();
+        end
+        %%
+        function color = get_default_color_cyclic(ind_in)
+            colors = Visuals.default_colors();
+            N = size(colors, 1);
+            ind_used = mod(ind_in-1,N)+1;
+            color = colors(ind_used, :);
         end
         %%
         function clear_old_lines(axisH)

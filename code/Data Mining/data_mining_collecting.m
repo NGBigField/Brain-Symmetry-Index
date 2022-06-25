@@ -1,12 +1,16 @@
+% Given a table of viable data (e.g. "data_mining_viable_data.xlsx"), this script makes a file containig many 
+% Short samples of the data
+% Use Constants to filer the data and choose length of samples.
+%
 %% clear
 close all; clear all; clc;
 addpath(genpath(pwd));
 
 %% Constants:
 Constants = struct;
-Constants.epoch_duration = 50.0 ; % [sec]
-Constants.epoch_overlap  = 10.0 ; % [sec]
-Constants.Condition = Classes.Condition.Normal;
+Constants.epoch_duration = 10.0 ; % [sec]
+Constants.epoch_overlap  =  2.0 ; % [sec]
+Constants.Condition = Classes.Condition.RightStroke;
 
 %% laod table
 Table = readtable("data_mining_viable_data.xlsx");

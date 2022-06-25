@@ -19,7 +19,7 @@ function [ imf_tensor, residue ] = bemd( input_image, options )
     k=1;
 
     % For progress:
-    static_printer = Classes.StaticPrinter();
+    static_printer = Classes.StaticPrinter(end_with_newline=false);
 
     % Mute warning:
     prevWarnState = warning;
@@ -33,11 +33,11 @@ function [ imf_tensor, residue ] = bemd( input_image, options )
 
     while (k < options.num_components )
         % Print Progress:
-        static_printer.print( "Bivariate EMD: k=" + string(k) + " out of " + string(options.num_components) );
+        static_printer.print( "Bivariate EMD: k = " + string(k) +".");
 
         % Sifting:
         try
-            [imf_temp, residue_temp] = sift(h_func);
+            [imf_temp, residue_temp] = sift(h_func, static_printer);
         catch exception
             error_msg = string(exception.message);
             if ~ismember(error_msg, expected_errors_at_last_imf) 
@@ -57,12 +57,15 @@ function [ imf_tensor, residue ] = bemd( input_image, options )
     % Return prev warning state:
     warning(prevWarnState);
 
+    % Clean Printings:
+    static_printer.clear();
+
     % Return outputs:
     residue = residue_temp;
 
 end
 %%
-function [ h_imf, residue ] = sift( input_image )
+function [ h_imf, residue ] = sift( input_image, static_printer)
 % This function sifts for a single IMF of the given 2D signal input
 % Pre-processing
 [len, bre] = size(input_image);
@@ -70,8 +73,7 @@ x = 1:len;
 y = 1:bre;
 input_image_temp = input_image;
 
-static_printer = Classes.StaticPrinter();
-static_printer.add_print("Sifting: ")
+static_printer.add_print(" Sifting: ")
 
 while(1)
     static_printer.add_print(".")
