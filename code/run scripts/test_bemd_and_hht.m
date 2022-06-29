@@ -1,3 +1,6 @@
+% Before running this script, have one tagged-Data loaded to your workspace.
+% These can be found in folder: Data\tagged\
+%
 %% clear
 clearvars('-except','Data');
 addpath(genpath(pwd));
@@ -8,7 +11,7 @@ side_labels = ["left", "right"];
 pre_filter = false;
 
 %% parse data:
-eeg_data = Data.EEGs(6);
+eeg_data = Data.EEGs(101);
 left  = eeg_data.left;
 right = eeg_data.right;
 time  = eeg_data.time;   
@@ -16,15 +19,8 @@ fs    = eeg_data.left.props.frequency;
 
 %% Filter signals:
 if pre_filter
-    f_pass1 = 2;
-    f_pass2 = 45;
-    high_pass_filt = @(x) highpass(x, f_pass1, fs);
-    low_pass_filt = @(x) lowpass(x, f_pass2, fs);
-    band_pass_filt = @(x) high_pass_filt(low_pass_filt(x));
-    
-
-    l_sig = band_pass_filt(left.recording);
-    r_sig = band_pass_filt(right.recording);
+    l_sig = DSP.band_pass_filter(left.recording , fs);
+    r_sig = DSP.band_pass_filter(right.recording, fs);
 else
     l_sig = left.recording;
     r_sig = right.recording;
@@ -43,7 +39,7 @@ num_components = size(imf_tensor, 3);
 
 %% Plot IMFs:
 figH = figure;
-sgtitle("BEMD EEG")
+sgtitle("BEMD EEG"+newline+"condition="+string(eeg_data.condition)+newline+filter_string(pre_filter))
 for i = 0 : (num_components+1)
     % IMFS:
     for j = 1 : 2
@@ -80,49 +76,35 @@ Visuals.standart_bemd_fig_size(figH)
 Visuals.link_axes(figH, "x")
 
 %% Plot HHTs:
-
-iImf = 3;
 figH = figure;
-sgtitle("BEMD EEG Hilbert-Huang Transform "+newline+"condition="+string(eeg_data.condition))
+sgtitle("BEMD EEG Hilbert-Huang Transform "+newline+"condition="+string(eeg_data.condition)+newline+filter_string(pre_filter))
+color_oredr = colororder;
 
 for iSide = 1 : 2
-    % Basic plot data:
     axisH = subplot(1,2,iSide);
-    title(side_labels(iSide) + "  imf-"+string(iImf), FontSize=15)
-    drawnow();
-    pause(0.001);
+    title( side_labels(iSide) + " IMFs", FontSize=14)
 
-    % hht analysis:
-    imf = imf_tensor(:, iSide, iImf);
-    [hs, freq_used, time_used] = hht(imf, fs, FrequencyResolution=0.01);
-    hs_max = full(max(hs, [], 'all'));
-    hs_min = full(min(hs, [], 'all'));
+    for iImf = 1 : num_components        
+        color = color_oredr(iImf, :);           
+        imf = imf_tensor(:, iSide, iImf);
+        name = "imf-"+string(iImf);
+        plot_hht(axisH, fs, imf, color, name)
+        draw_pause()
 
-    % Find elements:
-    [non_zero_vec_i,  non_zero_vec_j, non_zero_hhs] = find(hs);
-    f_vals = freq_used(non_zero_vec_i);
-    t_vals = time_used(non_zero_vec_j);       
-    color_limits = [0, 0.5];
-    color_vals = Visuals.color_vector(non_zero_hhs, colormap="jet", value_limits=color_limits);
+    end % imfF
 
-    % Plot:    
-    hold(axisH, "on")
-    scatter(axisH, t_vals, f_vals, 5, color_vals, "filled")
-    xlabel("time [sec]", FontSize=16)
-    ylabel("freq [Hz]" , FontSize=16)
-
-    % Draw:
-    drawnow();
-    pause(0.001);
-end
+end % iSide
 Visuals.link_axes(figH, "xy");
+legend(Location="northwest")
 
-%%
+%% Save figs:
+%{
+    Visuals.save_all_figs()
+%}
 
 %% Finish:
 disp("Done.")
-Sounds.gong(2, 110, 2)
-Sounds.gong(2, 220, 3)
+Sounds.finish()
 
 %% End
 
@@ -158,6 +140,32 @@ function plot_filter_results(raw, filtered, fs)
     legH.FontSize = 14;
 end
 
+%%
 
-    
+function plot_hht(axisH, fs, imf, color, name)
+    [t, f, h] = Algo.hht(imf, fs);
+    color_vals = Visuals.color_vector(h, color=color);
 
+    % Plot:
+    hold(axisH, "on")
+    scatter(axisH, t, f, 3, color_vals, "filled", DisplayName=name)
+    xlabel("time [sec]", FontSize=16)
+    ylabel("freq [Hz]" , FontSize=16)
+end
+
+%%
+
+function draw_pause()
+    drawnow();
+    pause(0.001);
+end
+
+%%
+
+function str = filter_string(filter_on)
+    if filter_on
+        str = "with band-pass filter";
+    else
+        str = "without filter";
+    end
+end

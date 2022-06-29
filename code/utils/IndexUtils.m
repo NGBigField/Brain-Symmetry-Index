@@ -26,6 +26,35 @@ classdef IndexUtils
             distance = abs(val-ref);
             [~, index] = min(distance);
         end
+        %%
+        function tf = is_member(val, list)
+            tf = false;
+            if isempty(list)
+                return                
+            end
+            if iscell(list)
+                for i = 1 : length(list)
+                    elem = list{i};
+                    if elem == val
+                        tf = true;
+                        return
+                    end
+                end % for i
+            end % if cell
+            tf = ismember(val, list);
+        end
     end
 
+end % class def
+
+%%
+
+%% Subs:
+function tf = is_scalar(x)
+    [r,c] = size(x);
+    if (r > 1) || (c > 1)
+        tf = 0;
+    else
+        tf = 1;
+    end
 end

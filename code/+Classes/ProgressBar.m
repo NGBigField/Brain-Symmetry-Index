@@ -29,7 +29,12 @@ classdef ProgressBar < handle
                 return
             end               
             obj.crntCount = 1 + obj.crntCount;
-            obj.update_plot()
+            try
+                obj.update_plot()
+            catch ME
+                error_msg = string(ME.getReport);
+                warning(error_msg);
+            end
         end
         %%
         function [] = request_cancle(obj, src, event)                              

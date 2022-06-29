@@ -2,6 +2,7 @@ classdef Condition
     enumeration
         Normal
         LeftStroke
-        RightStroke        
+        RightStroke  
+        Unknown
     end
 end
