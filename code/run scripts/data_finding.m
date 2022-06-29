@@ -1,14 +1,19 @@
+% This script helps visually explore a raw recording.
+% Each plot will have a unqiue color-style combination to easily identity and rule out bad electrodes.
+%
 %% Reset:
 clear all; close all; clc;
 addpath(genpath(pwd))
 
 %% Load:
-file_name = "00007004_s006_t000.edf";
+file_name = "00013547_s001_t001.edf";
 [hdr, record] = edfread(file_name);
 
 %% Signals list to ignore:
-ignore_list = ["32" "31" "30" "29" "28" "27" "26" "25" "24" "23" "22" "21" "20" "PZ" "EKG1" "FZ" "CZ"];
-ignore_list = [ignore_list "SP1" "SP2" "C3P" "C4P" "EMG" "T1" "T2"];
+ignore_list = ["32" "31" "30" "29" "28" "27" "26" "25" "24" "23" "22" "21" "20" "PZ" "EKG1" "FZ" "CZ" "EMG" "LOC" "ROC" "PHOTIC"];
+% ignore_list = [ignore_list "SP1" "SP2" "C3" "C4" "EMG" "T1" "T2" "T3" "T4" "T5" "T6" "C3P" "C4P" "P3" "P4" "O1" "O2"];
+% ignore_list = [ignore_list "F7" "F8" "F3" "F4" ]
+ignore_list = [ignore_list "SP1" "SP2" ];
 close all;
 % Plot:
 plot_eeg(hdr, record, ignore_list)

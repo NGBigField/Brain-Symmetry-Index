@@ -4,7 +4,18 @@ classdef Visuals
     
     methods (Static)
         function colors = distinguishable_colors(n_colors)
-            colors = distinguishable_colors_full(n_colors,bg,func);
+            colors = distinguishable_colors_full(n_colors);
+        end
+        %%
+        function colors = default_colors()
+            colors = colororder();
+        end
+        %%
+        function color = get_default_color_cyclic(ind_in)
+            colors = Visuals.default_colors();
+            N = size(colors, 1);
+            ind_used = mod(ind_in-1,N)+1;
+            color = colors(ind_used, :);
         end
         %%
         function clear_old_lines(axisH)
@@ -14,7 +25,7 @@ classdef Visuals
             children = axisH.Children;
             for i = 1 : length(children)
                 child = children(i);
-                if ismember(string(child.Type), ["line", "bar"]) 
+                if ismember( string(child.Type), ["line", "bar", "scatter"]) ;
                     delete(children(i))
                 end
             end % for i
@@ -109,20 +120,37 @@ classdef Visuals
             end % for iC
         end
         %%
-        function widen_axes(subaxes, ind, factor)
+        function change_axis_width(axis, axes_to_the_right, factor)
             % calc width:
-            prevWidth = subaxes(ind).Position(3);
+            prevWidth = axis.Position(3);
             newWidth = prevWidth * factor;
             % Assign:
-            subaxes(ind).Position(3) = newWidth;
+            axis.Position(3) = newWidth;
             % adjust next axes:
             dW = newWidth-prevWidth;
-            for nextInd = ind+1 : length(subaxes)
+            for i = 1 : length(axes_to_the_right)
                 drawnow;
-                subaxes(nextInd).Position(1) = subaxes(nextInd).Position(1) + dW;
+                axis_to_the_right = axes_to_the_right(i);
+                axis_to_the_right.Position(1) = axis_to_the_right.Position(1) + dW;
             end
-
         end
+        %%
+        function sequencialy_change_axes_widths(sorted_axes_array, factor)
+            for i = 1 : length(sorted_axes_array)
+                Visuals.change_axis_width(sorted_axes_array(i), sorted_axes_array(i+1:end), factor);
+            end
+        end
+        %% 
+        function index = grid_xy_to_index(m,n,y,x)
+            arguments
+                m (1,1) {mustBeInteger} % grid dimensions 1
+                n (1,1) {mustBeInteger} % grid dimensions 2
+                y (1,:) {mustBeInteger} % axis location 1 
+                x (1,:) {mustBeInteger} % axis location 2 
+            end
+            index = n*(y-1)+x;
+        end
+        %%
 
     end % methods
 end % class

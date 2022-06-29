@@ -1,6 +1,7 @@
-% Given a table of viable data (e.g. "data_mining_viable_data.xlsx"), this script makes a file containig many 
+% Given a table of viable data (e.g. "data_mining_viable_data.xlsx"), this script makes a matlab ".mat" file containig many 
 % Short samples of the data
-% Use Constants to filer the data and choose length of samples.
+% Use `Constants` to filer the data and choose length of samples.
+% Make sure that the table is not open by any other program before running the script.
 %
 %% clear
 close all; clear all; clc;
@@ -10,7 +11,8 @@ addpath(genpath(pwd));
 Constants = struct;
 Constants.epoch_duration = 10.0 ; % [sec]
 Constants.epoch_overlap  =  2.0 ; % [sec]
-Constants.Condition = Classes.Condition.RightStroke;
+Constants.fileNames = ["00013547_s001_t001"];  % only take from these files
+Constants.Condition = Classes.Condition.Normal; % only take files with this condition
 
 %% laod table
 Table = readtable("data_mining_viable_data.xlsx");
@@ -36,7 +38,7 @@ fullpath = folder+fs+filename;
 N = length(eeg_file_names);
 prog_bar = Classes.ProgressBar(N);
 for i = 1 : N
-    prog_bar.step()
+    prog_bar.step();
 
     eeg_file_name = eeg_file_names(i);      
         
@@ -257,6 +259,13 @@ function isSkip = check_skip(Constants, Table, eeg_file_name)
         isSkip = false;
     else
         isSkip = true;
+    end
+    if ~isempty(Constants.fileNames) 
+        if ismember(eeg_file_name, Constants.fileNames)
+            isSkip = false;
+        else
+            isSkip = true;
+        end
     end
 
 

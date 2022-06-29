@@ -1,0 +1,2 @@
+username is "nedc"
+password is "nedc_resources"

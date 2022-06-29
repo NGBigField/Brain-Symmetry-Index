@@ -29,7 +29,12 @@ classdef ProgressBar < handle
                 return
             end               
             obj.crntCount = 1 + obj.crntCount;
-            obj.update_plot()
+            try
+                obj.update_plot()
+            catch ME
+                error_msg = string(ME.getReport);
+                warning(error_msg);
+            end
         end
         %%
         function [] = request_cancle(obj, src, event)                              
@@ -45,15 +50,18 @@ classdef ProgressBar < handle
             end
         end
         %% 
-        function [] = close(obj)
+        function close(obj)
             obj.close_figure()
+        end
+        %%
+        function delete(obj)
+            obj.close_figure();
         end
 
     end
 
     methods (Access=protected)
         function close_figure(obj)
-            disp("close_figure");
             figH = obj.waitBar;
             if isgraphics(figH)
                 close(figH, "force");
@@ -62,7 +70,8 @@ classdef ProgressBar < handle
         %%
         function [] = update_plot(obj)
             compFrac = obj.completion_fraction();
-            waitbar( compFrac, obj.waitBar ) %#ok<*CPROP> 
+            progText = obj.prog_text();
+            waitbar( compFrac, obj.waitBar, progText  ) 
         end
         %%
         function compFrac = completion_fraction(obj)
@@ -78,15 +87,16 @@ classdef ProgressBar < handle
             progText = obj.prog_text();
             if cancelable
                 f = waitbar(0, progText, "CreateCancelBtn", @(src,event) obj.request_cancle(src,event) );
+                button = f.Children(1);
+                button.BackgroundColor = [0.9, 0.2, 0.3];
+                button.ForegroundColor = [0.9, 0.9, 0.9];
             else
                 f = waitbar(0, progText );
             end
             f.Name = msg;
             % Colors:
             f.Color = [0.3, 0.5, 0.9];
-            button = f.Children(1);
-            button.BackgroundColor = [0.9, 0.2, 0.3];
-            button.ForegroundColor = [0.9, 0.9, 0.9];
+            
         end
     end % methods
 end % class

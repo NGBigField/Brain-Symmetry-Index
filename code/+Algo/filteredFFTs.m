@@ -1,6 +1,6 @@
 function [L, R, f] = filteredFFTs(l, r, options)
-%BSI Brain Symmetry Index:
-% A code from:
+%function [L, R, f] = filteredFFTs(l, r, options) used for Brain Symmetry Index:
+% A code based on:
 % Continuous Quantitative EEG Monitoring in Hemispheric Stroke Patients Using the Brain Symmetry Index
     
     arguments

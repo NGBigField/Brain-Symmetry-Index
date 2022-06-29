@@ -9,7 +9,7 @@ classdef PrintedProgressBar < handle
     end
 
     properties (SetAccess=protected)
-        static_printer (1,1) Classes.StaticPrinter = Classes.StaticPrinter()
+        static_printer (1,1) Classes.StaticPrinter 
         crnt_count     (1,1) uint32 = 0
     end
 
@@ -23,24 +23,37 @@ classdef PrintedProgressBar < handle
                 options.msg          (1,1) string = "Working:"
                 options.mark         (1,1) string = "#"
             end
-            obj.expected_end = expected_end;
-            obj.print_length = options.print_length;
-            obj.msg          = options.msg;
-            obj.mark         = options.mark;
+            obj.expected_end   = expected_end;
+            obj.print_length   = options.print_length;
+            obj.msg            = options.msg;
+            obj.mark           = options.mark;
+            obj.static_printer = Classes.StaticPrinter();
         end
         %%
         function [] = step(obj)            
+            % Count:
             obj.crnt_count = obj.crnt_count + 1;
+            % Get num_out_of_num string:
+            n_outof_n_str = StringUtils.num_out_of_num(obj.crnt_count, obj.expected_end);
+            % Compute amount of marks and spaces to plot:
             fraction = double(obj.crnt_count) / double(obj.expected_end) ;
-            remained_print_space = obj.print_length - strlength(obj.msg+" []");            
+            remained_print_space = obj.print_length - strlength(obj.msg+" [] ()"+n_outof_n_str);            
             crnt_num_marks = round(remained_print_space*fraction);
+            crnt_num_spaces = remained_print_space-crnt_num_marks;
             if crnt_num_marks == obj.num_marks
                 return
             end
-            [marks, spaces] = split_space(remained_print_space, crnt_num_marks, obj.mark);
-            text = obj.msg+" ["+marks+spaces+"]";
+            % Get strings:
+            [marks, spaces] = split_space(crnt_num_marks, crnt_num_spaces, obj.mark);
+            text = obj.msg+" ["+marks+spaces+"] ("+n_outof_n_str+")";
+            % Print:
             obj.static_printer.print(text)
+            % Keep num_marks so we won't print the same thing twice.
             obj.num_marks = crnt_num_marks;            
+        end
+        %% 
+        function [] = clear(obj)
+            obj.static_printer.clear();
         end
 
     end
@@ -49,15 +62,7 @@ end
 %% 
 
 %% Subs:
-function [marks, spaces] = split_space(remained_print_space, num_marks, mark)
-    if num_marks == 0
-        marks  = "";
-        spaces = strjoin( repmat(" ", 1, remained_print_space) );        
-    elseif num_marks == remained_print_space
-        marks  = strjoin( repmat(mark, 1, num_marks) );
-        spaces = "";
-    else
-        marks  = strjoin( repmat(mark, 1, num_marks) );
-        spaces = strjoin( repmat(" ", 1, remained_print_space-num_marks) );
-    end
+function [marks, spaces] = split_space(nMarks, nSpaces, mark)
+    marks  = StringUtils.repeat(mark, nMarks);
+    spaces = StringUtils.repeat(" ", nSpaces);
 end

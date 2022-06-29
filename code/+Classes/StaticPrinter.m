@@ -1,7 +1,7 @@
 classdef StaticPrinter < handle
 
-    properties (Hidden)
-        printed_length (1,1) uint64 = 0
+    properties (Access=protected)
+        printed_length   (1,1) {mustBeInteger} = 0
         end_with_newline (1,1) logical = true
     end
 
@@ -22,10 +22,9 @@ classdef StaticPrinter < handle
             end
             obj.clear()
             if obj.end_with_newline
-                obj.printed_length = fprintf(str+newline);
-            else
-                obj.printed_length = fprintf(str);
+                str = str + newline;
             end
+            obj.printed_length = fprintf(str);           
         end        
         %%        
         function add_print(obj, str)
@@ -39,7 +38,12 @@ classdef StaticPrinter < handle
 
     methods 
         function [] = clear(obj)
-            fprintf(repmat('\b',1,obj.printed_length))
+            if obj.printed_length==0
+                return
+            end
+            str_that_clears_print = repmat('\b',1,obj.printed_length);
+            fprintf(str_that_clears_print);
+            obj.printed_length = 0;
         end
     end
 

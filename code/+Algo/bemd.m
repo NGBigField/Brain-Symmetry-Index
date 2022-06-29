@@ -3,10 +3,10 @@ Sasikanth (2022). Bi dimensional Emperical Mode Decomposition (BEMD)
 (https://www.mathworks.com/matlabcentral/fileexchange/28761-bi-dimensional-emperical-mode-decomposition-bemd), 
 MATLAB Central File Exchange. Retrieved June 19, 2022.
 %}
-function [ imf_matrix, residue_temp ] = bemd( input_image, options )
+function [ imf_tensor, residue ] = bemd( input_image, options )
     arguments
         input_image
-        options.num_components (1,1) uint16 = 4
+        options.num_components (1,1) uint16 = 12
     end
     % BEMD This program calculates the Bidimensional EMD of a 2-d signal using
     % the process of sifting. It is dependent on the function SIFT.
@@ -19,7 +19,7 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
     k=1;
 
     % For progress:
-    static_printer = Classes.StaticPrinter();
+    static_printer = Classes.StaticPrinter(end_with_newline=false);
 
     % Mute warning:
     prevWarnState = warning;
@@ -33,11 +33,11 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
 
     while (k < options.num_components )
         % Print Progress:
-        static_printer.print( "Bivariate EMD: k=" + string(k) + " out of " + string(options.num_components) );
+        static_printer.print( "Bivariate EMD: k = " + string(k) +".");
 
         % Sifting:
         try
-            [imf_temp, residue_temp] = sift(h_func);
+            [imf_temp, residue_temp] = sift(h_func, static_printer);
         catch exception
             error_msg = string(exception.message);
             if ~ismember(error_msg, expected_errors_at_last_imf) 
@@ -47,7 +47,7 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
         end
 
         % assign to output:
-        imf_matrix(:,:,k) = imf_temp; %#ok<AGROW>
+        imf_tensor(:,:,k) = imf_temp; %#ok<AGROW>
         h_func = residue_temp;
 
         % Increment step:
@@ -57,9 +57,15 @@ function [ imf_matrix, residue_temp ] = bemd( input_image, options )
     % Return prev warning state:
     warning(prevWarnState);
 
+    % Clean Printings:
+    static_printer.clear();
+
+    % Return outputs:
+    residue = residue_temp;
+
 end
 %%
-function [ h_imf, residue ] = sift( input_image )
+function [ h_imf, residue ] = sift( input_image, static_printer)
 % This function sifts for a single IMF of the given 2D signal input
 % Pre-processing
 [len, bre] = size(input_image);
@@ -67,8 +73,7 @@ x = 1:len;
 y = 1:bre;
 input_image_temp = input_image;
 
-static_printer = Classes.StaticPrinter();
-static_printer.add_print("Sifting: ")
+static_printer.add_print(" Sifting: ")
 
 while(1)
     static_printer.add_print(".")
