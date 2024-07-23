@@ -1,2 +1,2 @@
 # Brain-Symmetry-Index
- A project for Technion course
+ A project initiated as part of a Technion course
